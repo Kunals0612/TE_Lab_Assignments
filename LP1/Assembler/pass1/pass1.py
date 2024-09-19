@@ -1,6 +1,14 @@
+# Author: Shantanu Wable, Ruchi Bhale
+
 import re as regex
 import json
-# Directives mapping
+import os
+
+os.system('cls' if os.name == 'nt' else 'clear')
+
+# Creating the intermediate code file 
+
+# Input Files
 directives = {
     "start" : "(AD, 01)",
     "end" : "(AD, 02)",
@@ -10,7 +18,7 @@ directives = {
 }  
 
 # Mnemonics size mapping
-mneumonicSize = {
+msize = {
     "stop" : 1,
     "add" : 1,
     "sub" : 1,
@@ -32,7 +40,7 @@ mneumonicSize = {
 }
 
 # Mnemonics opcode mapping
-mneumonic = {
+mnemonics = {
     "stop" : "(IS, 00)",
     "add" : "(IS, 01)",
     "sub" : "(IS, 02)",
@@ -57,7 +65,7 @@ registers = {
 }
 
 # Conditional codes mapping
-conditionalCodes = {
+conditionCodes = {
     "lt" : 1,
     "le" : 2,
     "eq" : 3,
@@ -65,11 +73,16 @@ conditionalCodes = {
     "ge" : 5,
     "any" : 6
 }
+#input file
+file = open("/home/kunal/TE_Lab_Assignments/LP1/Assembler/pass1/input/program.asm",'r')
 
-# Regular expression pattern for splitting lines
+# Output Files
+icFile = open('/home/kunal/TE_Lab_Assignments/LP1/Assembler/pass1/output/IntermediateCode.txt', 'a')
+
+# Regex pattern to split on occurrence of one or more spaces
 pattern = r'\s+'
 
-# Initialize variables
+# Global variables to store data
 label = ""
 instruction = ""
 op1 = ""
@@ -78,22 +91,20 @@ op1code = ""
 op2code = ""
 current = 0
 previous = 0
-flag = False        
+flag = False        # Flag for when DS or DC is encountered
 relativeAddresses = []
 IC = []
 stCnt = 1
 ltCnt = 1
 
-# Symbol and literal tables
+# Tables
 symbolTable = {}
 literalTable = {}
 
-# Open input and output files
-file = open('LP1/Assembler/pass1/input/program.asm','r')
-outputfile = open('LP1/Assembler/pass1/output/IntermediateCode.txt','a')
-
-# Iterate through each line in the input file
+# Loop through lines in file
 for line in file:
+
+    # Clearing variables from previous iteration
     label = ""
     instruction = ""
     op1 = ""
@@ -101,151 +112,188 @@ for line in file:
     op1code = ""
     op2code = ""
     var = ""
-    
-    # Skip empty lines
-    if line == '/n':
-        continue
+
+    # Skip blank lines and remove beginning and trailing whitespace(s)
+    if line == '\n': continue
     line = line.strip()
 
-    # Split the line into tokens using the regex pattern
+    # Split the line into words and convert them to lowercase to avoid casing issues
     cmd = regex.split(pattern, line.rstrip())
-    cmd = list(map(lambda x: x.lower(), cmd))  # Convert tokens to lowercase
+    cmd = list(map(lambda x: x.lower(), cmd))
 
-    # Determine the number of tokens and parse accordingly
+    # ------------ TOKENIZATION ------------
+
     if len(cmd) == 4:
+        """
+            Command is of the format: 
+            LABEL INSTRUCTION OP1 OP2
+        """
+        
         label = cmd[0]
         instruction = cmd[1]
         op1 = cmd[2]
         op2 = cmd[3]
-    
+
     elif len(cmd) == 3:
+        """
+            Command is of the format: 
+            OP1 INSTRUCTION OP2
+                    or
+            INSTRUCTION OP1 OP2
+        """
         cmdIndex = -1
-        for c in cmd:
-            if c in mneumonic:
-                if c == "dc" or c == "ds":
+        for command in cmd:
+            if command in mnemonics:
+                if command == "ds" or command == "dc":
                     var = cmd[0]
                     cmdIndex = 1
                     op1 = cmd[2]
                     flag = True
                     break
-                else:
-                    cmdIndex = cmd.index(c)
+                else:    
+                    cmdIndex = cmd.index(command)
                     break
-
-            if c in directives:
-                cmdIndex = cmd.index(c)
+            if command in directives:
+                cmdIndex = cmd.index(command)
                 break
-
+        
         instruction = cmd[cmdIndex]
         if cmdIndex == 0:
-            op1 = cmd[0]
-            op2 = cmd[1]
+            op1 = cmd[1]
+            op2 = cmd[2]
+        
         elif flag == False:
-            op1 = cmd[cmdIndex-1]
-            op2 = cmd[cmdIndex+1]
-
+            op1 = cmd[cmdIndex - 1]
+            op2 = cmd[cmdIndex + 1]
+    
     elif len(cmd) == 2:
+        """
+            Command is of the format: 
+            INSTRUCTION OP1
+                    or
+            LABEL INSTRUCTION
+        """
         cmdIndex = -1
-        for c in cmd:
-            if c in directives:
-                cmdIndex = cmd.index(c)
-            if c in mneumonic:
-                cmdIndex = cmd.index(c)
-            instruction = cmd[cmdIndex]
-            if cmdIndex == 0:
-                op1 = cmd[1]
-            else:
-                label = cmd[0]
+        for command in cmd:
+            if command in directives:    
+                cmdIndex = cmd.index(command)
+                break
+            if command in mnemonics:  #**********edited
+                cmdIndex = cmd.index(command)
+                break
+        instruction = cmd[cmdIndex]
+        if cmdIndex == 0:
+            op1 = cmd[1]
+        else:
+            label = cmd[0]
 
     else:
+        """
+            Command is of the format: INSTRUCTION
+        """
         instruction = cmd[0]
 
-    # Handle directives
+    # ------------ INSTRUCTION MATCHING ------------
+
     if instruction in directives:
         if instruction == 'start':
             current = int(cmd[1])
             opcode = directives.get(instruction)
-            op1code = f"(C,{op1})"
-            outputfile.write(f" {opcode} {op1code}\n")
+            op1code = f"(C, {current})"
+            icFile.write(f"    {opcode} {op1code}\n")
             continue
+
         elif instruction == 'end':
-            op1code = directives.get(instruction)
-            outputfile.write(f"   {opcode}\n")
+            opcode = directives.get(instruction)
+            # size = int(msize.get(instruction))
+            icFile.write(f'    {opcode}\n')
             break
+
         elif instruction == 'origin':
-            op1code = directives.get(instruction)
+            opcode = directives.get(instruction)
             op1 = cmd[1]
-            if '-' in op1:
+            if "-" in op1:
                 label = op1.split('-')[0]
                 offset = op1.split('-')[1]
                 op1code = f"(S, {symbolTable.get(label)[0]})-{offset}"
                 previous = current
                 current = symbolTable.get(label)[2] - int(offset)
                 relativeAddresses.append(previous)
-                outputfile.write(f"    {opcode} {op1code}\n")
-            elif '+' in op1:
+                icFile.write(f"    {opcode} {op1code}\n")
+
+            elif "+" in op1:
                 label = op1.split('+')[0]
                 offset = op1.split('+')[1]
                 op1code = f"(S, {symbolTable.get(label)[0]})+{offset}"
                 previous = current
                 current = symbolTable.get(label)[2] + int(offset)
                 relativeAddresses.append(previous)
-                outputfile.write(f"    {opcode} {op1code}\n")
+                icFile.write(f"    {opcode} {op1code}\n")
+
             else:
                 op1code = f"(S, {symbolTable.get(op1)[0]})"
                 previous = current
                 current = symbolTable.get(op1)[2]
                 relativeAddresses.append(previous)
-                outputfile.write(f"    {opcode} {op1code}\n")
-
-        # elif instruction == 'equ':
-        #     op1 = cmd[0]
-        #     op2 = cmd[2]
-        #     symbolTable[op1][2] = symbolTable[op2][2]
+                icFile.write(f"    {opcode} {op1code}\n")
+            
+        elif instruction == 'equ':
+            op1 = cmd[0]
+            op2 = cmd[2]
+            symbolTable[op1][2] = symbolTable[op2][2]
 
         elif instruction == 'ltorg':
             for literal, [index, lt, value] in literalTable.items():
                 if value == -1:
+                    
                     previous = current
                     current += 1
                     relativeAddresses.append(previous)
-                    literalTable[literal][2] = previous 
+
+                    literalTable[literal][2] = previous #//////////changes current to previous
                     opcode = "(DL, 01)"
-                    op1code = f"(C, {lt})"  
-                    outputfile.write(f"{previous} {opcode} {op1code}\n") 
+                    op1code = f"(C, {lt})"    #****changed value to lt because val gives memory add and lt is value of literal
+                    icFile.write(f"{previous} {opcode} {op1code}\n") #added prev for lc
+
                 else:
                     pass
 
-    # Handle mnemonics
-    elif instruction in mneumonic:
-        if instruction == 'ds':
-            op2code = f""
-        if instruction == 'dc':
-            op2code = f""
-        opcode = mneumonic.get(instruction)
-        size = int(mneumonicSize.get(instruction))
+    elif instruction in mnemonics:
+        
+        # added these to avoid printing of (S,n) for the variables in the DS DC instructions
+        if instruction=='ds': 
+            # op1code=f"(C,{op2})"
+            op2code=f""
+        if instruction=='dc':
+            # op1code=f"(C,{op2[1]})"
+            op2code=f""
+            
+        opcode = mnemonics.get(instruction)
+        size = int(msize.get(instruction))
 
         previous = current
         current += size
 
         relativeAddresses.append(previous)
 
-        # Update symbol table
         if label:
             if label in symbolTable:
                 symbolTable[label][2] = previous
             else:
                 symbolTable[label] = [stCnt, label, previous]
-                stCnt += 1  
+                stCnt += 1
 
-        # Process operands
+        # ------------ Operand 1 ------------
+
         if instruction == 'bc':
-            op1code = f'({conditionalCodes.get(op1)})'
+            op1code = f'({conditionCodes.get(op1)})'
 
         elif op1.isdigit():
-            op1code = f'(C,{op1})'
+            op1code = f'(C, {op1})'
+
         elif op1 in registers:
-            op1code = f'({registers.get(op1)})'
+            op1code = f"({registers.get(op1)})"
+
         elif "=" in op1:
             literal = op1.split('=')[1][1]
             if op1 in literalTable:
@@ -254,30 +302,33 @@ for line in file:
                 literalTable[ltCnt] = [ltCnt, literal, -1]
                 op1code = f"(L, {ltCnt})"
                 ltCnt += 1
-        elif instruction == 'ds' or instruction == 'dc':
-            symbolTable[op1][2] = previous
-        else:
+
+         # Added this so that symbol table has value of that LC where the variable is declared using DC DS
+        elif instruction=='ds' or instruction=='dc':
+            symbolTable[op1][2]=previous
+        else :
             if op1 in symbolTable:
                 op1code = f"(S, {symbolTable.get(op1)[0]})"
             elif op1:
                 symbolTable[op1] = [stCnt, op1, -1]
                 op1code = f"(S, {stCnt})"
                 stCnt += 1
-        
-        # Process second operand
+
+        # ------------ Operand 2 ------------
+
         if op2.isdigit():
             op2code = f'(C, {op2})'
 
         elif instruction == 'ds' or instruction == 'dc':
-            # print("hello")
-            pass
+            symbolTable[var][2] = previous
+
         elif op2 in registers:
             op2code =  f"({registers.get(op2)})"
             
         elif "=" in op2:
             literal = op2.split('=')[1][1]
             if op2 in literalTable:
-                op2code = f"(L, {literalTable.get(op2)[0]})"    
+                op2code = f"(L, {literalTable.get(op2)[0]})"
             else:
                 literalTable[ltCnt] = [ltCnt, literal, -1]
                 op2code = f"(L, {ltCnt})"
@@ -286,41 +337,33 @@ for line in file:
         else:
             if op2 in symbolTable:
                 op2code = f"(S, {symbolTable.get(op2)[0]})"
-            elif op2 and instruction != 'dc':
+            elif op2 and instruction!='dc': #*** to avoid the literal entry in symbol table
                 symbolTable[op2] = [stCnt, op2, previous]
                 op2code = f"(S, {stCnt})"
                 stCnt += 1
-        
-        # Append the instruction with operands to the instruction code list
-        if instruction != 'stop':
+                
+        if instruction!='stop':
             IC.append((opcode, op1code, op2code))
-            outputfile.write(f"{previous} {opcode} {op1code} {op2code}\n")
+            icFile.write(f"{previous} {opcode} {op1code} {op2code}\n") 
         else:
             IC.append((opcode))
-            outputfile.write(f"{previous} {opcode}\n")
+            icFile.write(f"{previous} {opcode}\n")
 
     else:
-        # If instruction is neither a directive nor a mnemonic, exit with an error
         print(instruction, "Instruction not defined. Exiting the program...")
         exit(0)
-
-# Process literals that haven't been assigned a value yet
+        
+# added this to avoid literals without memory location
 for literal, [index, lt, value] in literalTable.items():
     if value == -1:
         previous = current
         current += 1
         relativeAddresses.append(previous)
-        literalTable[literal][2] = previous 
+        literalTable[literal][2] = previous #////////changes current to previous
 
         opcode = "(DL, 01)"
         op1code = f"(C, {lt})"   
-        outputfile.write(f"{previous} {opcode} {op1code}\n")
-
-# Output symbol and literal tables
-# print("SymbolTable is: ", symbolTable)
-# print("LiteralTable is: ", literalTable)
-outputfile.write(f"SymbolTable: {json.dumps(symbolTable)}")
-outputfile.write(f"LiteralTable:{json.dumps(literalTable)}")
-# Close the input and output files
-file.close()
-outputfile.close()
+        icFile.write(f"{previous} {opcode} {op1code}\n")
+                                       
+print(symbolTable)
+print(literalTable)
