@@ -1,12 +1,11 @@
 
 
-    CREATE TABLE Dept (
+ CREATE TABLE Dept (
     Dept_id INT PRIMARY KEY,
     Dept_name VARCHAR(50),
     Location VARCHAR(50)
-    );
-
-    CREATE TABLE Employee (
+);
+CREATE TABLE Employee (
     Emp_id INT PRIMARY KEY,
     Dept_id INT,
     Emp_fname VARCHAR(50),
@@ -14,19 +13,18 @@
     Emp_position VARCHAR(50),
     Emp_salary INT,
     Emp_JoinDate DATE,
-    FOREIGN KEY (Dept_id) REFERENCES Dept(Dept_id)
-    );
+    FOREIGN KEY (Dept_id) REFERENCES Dept(Dept_id) ON DELETE CASCADE
+);
 
-    CREATE TABLE Project (
+CREATE TABLE Project (
     Proj_id INT PRIMARY KEY,
     Dept_id INT,
     Proj_name VARCHAR(50),
     Proj_Location VARCHAR(50),
     Proj_Cost INT,
     Proj_year DATE,
-    FOREIGN KEY (Dept_id) REFERENCES Dept(Dept_id)
-    );
-
+    FOREIGN KEY (Dept_id) REFERENCES Dept(Dept_id) ON DELETE CASCADE
+);
     INSERT INTO Dept (Dept_id, Dept_name, Location) VALUES
     (1, 'COMPUTER', 'New York'),
     (2, 'IT', 'San Francisco'),
@@ -73,12 +71,13 @@ select Emp_position, count(*) as total_employee from Employee group by Emp_posit
 update Employee set Emp_salary = Emp_salary + Emp_salary * 0.1 where Emp_JoinDate < "2020-01-01";
 select * from Employee;
 -- Delete the dept with name Chicago
-SET FOREIGN_KEY_CHECKS = 0;
+
+-- SET FOREIGN_KEY_CHECKS = 0;
 
 delete from Dept where Location = "Chicago";
 select * from Dept;
 
-SET FOREIGN_KEY_CHECKS = 1;
+-- SET FOREIGN_KEY_CHECKS = 1;
 
 -- find the name of project where location is Austin
 select Proj_name from Project where dept_id in(select dept_id from Dept where location = "Austin");
