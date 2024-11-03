@@ -3,7 +3,6 @@ CREATE TABLE Library (
     book_id INT PRIMARY KEY,
     book_name VARCHAR(100),
     author_name VARCHAR(100),
-    genre VARCHAR(50),
     published_year INT
 );
 
@@ -13,10 +12,8 @@ CREATE TABLE Library_Audit (
     book_id INT,
     book_name VARCHAR(100),
     author_name VARCHAR(100),
-    genre VARCHAR(50),
     published_year INT,
     operation_type VARCHAR(10),   -- To track whether it's an 'UPDATE' or 'DELETE'
-    change_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Trigger to capture old values before updating the Library table
