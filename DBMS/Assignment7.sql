@@ -25,6 +25,8 @@ BEGIN
     VALUES (NEW.book_id, NEW.book_name, NEW.author_name, NEW.published_year, 'INSERT');
 END;
 
+DELIMITER //
+    
 -- BEFORE UPDATE trigger to log the old details before updating a record in the Library table
 CREATE TRIGGER before_library_update
 BEFORE UPDATE ON Library

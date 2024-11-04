@@ -29,35 +29,36 @@ INSERT INTO borrower VALUES
 
 DELIMITER //
 
-CREATE PROCEDURE library(IN roll INT)
-BEGIN 
+CREATE PROCEDURE library(IN roll INT, IN book VARCHAR(50))
+BEGIN
     DECLARE fine INT;
     DECLARE dt2 INT;
     
+    -- Exit handler for foreign key constraint error (error code 1452)
     DECLARE EXIT HANDLER FOR 1452 
     SELECT 'Primary key not found' AS ErrorMessage;
 
-    -- Fetch the date of issue (doi) from the borrower table
+    -- Fetch the date of issue (doi) from the Borrower table based on roll_no and book_name
     SELECT @idt := doi 
-    FROM borrower 
-    WHERE (roll_no = roll);
+    FROM Borrower 
+    WHERE roll_no = roll AND book_name = book;
 
-    -- Fetch the status from the borrower table
+    -- Fetch the status from the Borrower table
     SELECT @stt := status 
-    FROM borrower 
-    WHERE (roll_no = roll);
+    FROM Borrower 
+    WHERE roll_no = roll AND book_name = book;
 
-    -- Calculate the difference in days between current date and issue date
+    -- Calculate the difference in days between the current date and issue date
     SET dt2 := DATEDIFF(CURDATE(), @idt);
 
     -- If the book has not been returned
     IF @stt = FALSE THEN
-        IF dt2 BETWEEN 0 AND 14 THEN
-            SET fine := 0;
+        IF dt2 <= 14 THEN
+            SET fine := 0;  -- No fine if returned within 14 days
         ELSEIF dt2 BETWEEN 15 AND 30 THEN
-            SET fine := 50;
+            SET fine := (dt2 - 14) * 5;  -- Rs 5 per day for days 15 to 30
         ELSE
-            SET fine := 100;
+            SET fine := (16 * 5) + ((dt2 - 30) * 50);  -- Rs 5 per day for days 15-30, Rs 50 per day for days > 30
         END IF;
 
         -- Insert fine details into the Fine table
@@ -65,15 +66,15 @@ BEGIN
         VALUES (roll, CURDATE(), fine);
 
         -- Update the status of the book to returned
-        UPDATE borrower 
+        UPDATE Borrower 
         SET status = TRUE 
-        WHERE (roll_no = roll);
+        WHERE roll_no = roll AND book_name = book;
         
     ELSE
         -- If the book has already been returned
         SELECT 'Book has already been returned' AS Message;
     END IF;
-
 END //
+
 
 DELIMITER ;

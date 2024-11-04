@@ -1,5 +1,6 @@
   //create
   db.createCollection("employees");
+  
   // insert
   db.employees.insertMany([
     {empId: 1, name: 'Clark', dept: 'Sales' },
