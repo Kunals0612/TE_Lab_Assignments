@@ -1,6 +1,7 @@
-
-// create
-db.employees.insertMany([
+  //create
+  db.createCollection("employees");
+  // insert
+  db.employees.insertMany([
     {empId: 1, name: 'Clark', dept: 'Sales' },
     {empId: 2, name: 'Dave', dept: 'Accounting' },
     {empId: 3, name: 'Ava', dept: 'Sales' }
