@@ -19,9 +19,15 @@ db.students.countDocuments();
 db.students.countDocuments({"marks": 95});
 
 // Group the documents by the 'marks' field, creating distinct groups for each unique 'marks' value.
-db.students.aggregate(
-  [{ $group: { _id: "$marks" }}]
-);
+db.students.aggregate([
+  {
+    $group: {
+      _id: "$marks",         // Group by the 'marks' field
+      count: { $sum: 1 }     // Count the number of documents in each group
+    }
+  }
+]);
+
 
 // Limit the output to only 1 document.
 db.students.aggregate(
@@ -46,6 +52,32 @@ db.students.aggregate(
   { $match: { marks: { $gt: 90 } } }
 );
 
+// Calculate the sum of all student marks.
+db.students.aggregate([
+  { $group: { _id: null, totalMarks: { $sum: "$marks" } } }
+]);
+// Explanation: This aggregation calculates the total sum of the 'marks' field across all documents.
+
+// Calculate the average of all student marks.
+db.students.aggregate([
+  { $group: { _id: null, averageMarks: { $avg: "$marks" } } }
+]);
+// Explanation: This aggregation calculates the average of the 'marks' field across all documents.
+
+
+// Find students with marks greater than 80 and less than 90
+db.students.find({ 
+  $and: [
+    { marks: { $gt: 80 } },
+    { marks: { $lt: 90 } }
+  ] 
+});
+
+// Find students whose marks are not 95
+db.students.find({ 
+  marks: { $not: { $eq: 95 } } 
+});
+
 // Create a unique index on the 'name' field to prevent duplicate names.
 db.students.createIndex({ name: 1 }, { unique: true }); 
 // Explanation: This index ensures that no two students can have the same name, enforcing data integrity.
@@ -67,14 +99,3 @@ db.students.getIndexes();
 db.students.createIndex({ marks: 1, name: 1 }, { unique: true });
 // Explanation: This unique compound index enforces uniqueness across the combination of 'marks' and 'name', which means that if two students have the same marks, they cannot have the same name. 
 
-// Calculate the sum of all student marks.
-db.students.aggregate([
-  { $group: { _id: null, totalMarks: { $sum: "$marks" } } }
-]);
-// Explanation: This aggregation calculates the total sum of the 'marks' field across all documents.
-
-// Calculate the average of all student marks.
-db.students.aggregate([
-  { $group: { _id: null, averageMarks: { $avg: "$marks" } } }
-]);
-// Explanation: This aggregation calculates the average of the 'marks' field across all documents.
