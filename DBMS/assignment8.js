@@ -1,22 +1,23 @@
 // Create Collection
 db.createCollection("students");
 
-// Insert documents into the students collection
+// Insert documents into the students collection with composite name fields
 db.students.insertMany([
-    { "id": 1, "name": "Alice", "age": 20, "courses": ["Math", "Science", "English"] },
-    { "id": 2, "name": "Bob", "age": 22, "courses": ["History", "Art"] },
-    { "id": 3, "name": "Charlie", "age": 21, "courses": ["Computer Science", "Mathematics"] },
-    { "id": 4, "name": "David", "age": 22, "courses": ["Math", "History"] }
+    { "id": 1, "name": { "fname": "Alice", "lname": "Smith" }, "age": 20, "courses": ["Math", "Science", "English"] },
+    { "id": 2, "name": { "fname": "Bob", "lname": "Johnson" }, "age": 22, "courses": ["History", "Art"] },
+    { "id": 3, "name": { "fname": "Charlie", "lname": "Brown" }, "age": 21, "courses": ["Computer Science", "Mathematics"] },
+    { "id": 4, "name": { "fname": "David", "lname": "Williams" }, "age": 22, "courses": ["Math", "History"] }
 ]);
 
 // Read all documents in the students collection
 db.students.find().pretty();
 
 // Find based on Id
-db.students.find({"id": 3});
+db.students.find({ "id": 3 });
+
 // Update a student's courses (Alice)
 db.students.updateOne(
-    { "name": "Alice" }, // Filter to find Alice
+    { "name.fname": "Alice" }, // Filter to find Alice using fname
     { $set: { "courses": ["Biology", "Physics"] } } // Update to new courses
 );
 
@@ -29,8 +30,8 @@ db.students.updateMany(
 // Read documents after updates
 db.students.find().pretty();
 
-// Delete students whose name is "Alice"
-db.students.deleteMany({ "name": "Alice" });
+// Delete students whose first name is "Alice"
+db.students.deleteMany({ "name.fname": "Alice" });
 
 // Read documents after the deletion
 db.students.find().pretty();
