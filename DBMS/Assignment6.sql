@@ -1,3 +1,26 @@
+CREATE TABLE old_employee (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    salary INT
+);
+
+CREATE TABLE new_employee (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    salary INT
+);
+
+INSERT INTO old_employee (employee_id, name, salary) VALUES
+(101, 'Alice', 50000),
+(102, 'Bob', 60000),
+(103, 'Charlie', 55000),
+(104, 'David', 70000),
+(105, 'Eve', 65000);
+
+INSERT INTO new_employee (employee_id, name, salary) VALUES
+(101, 'Alice', 50000),
+(104, 'David', 70000);
+
 DELIMITER //
 
 -- Parameterized Procedure: Adds a specific employee to new_employee if not already present
