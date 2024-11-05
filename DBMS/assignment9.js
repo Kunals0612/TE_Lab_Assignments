@@ -16,7 +16,7 @@ db.students.insertMany([
 db.students.countDocuments(); 
 
 // Count the number of documents where the name is 'Charlie'.
-db.students.countDocuments({"name": 'Charlie'});
+db.students.countDocuments({"marks": 95});
 
 // Group the documents by the 'marks' field, creating distinct groups for each unique 'marks' value.
 db.students.aggregate(
