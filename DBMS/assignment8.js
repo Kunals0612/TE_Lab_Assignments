@@ -15,6 +15,25 @@ db.students.find().pretty();
 // Find based on Id
 db.students.find({ "id": 3 });
 
+db.students.find({
+    $and: [
+        { "courses": "Math" },  // The student must be taking Math
+        { "age": 22 }           // The student must be 22 years old
+    ]
+}).pretty();
+
+db.students.find({
+    $or: [
+        { "age": 21 },             // The student must be 21 years old
+        { "courses": "History" }   // The student must be taking History
+    ]
+}).pretty();
+
+db.students.find({
+    "courses": { $not: { $eq: "Math" } }  // Inverts the condition to find students not taking Math
+}).pretty();
+
+
 // Update a student's courses (Alice)
 db.students.updateOne(
     { "name.fname": "Alice" }, // Filter to find Alice using fname
@@ -41,3 +60,7 @@ db.students.deleteMany({ "age": 23 });
 
 // Final read to show remaining students
 db.students.find().pretty();
+
+
+
+
