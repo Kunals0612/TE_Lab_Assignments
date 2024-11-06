@@ -99,3 +99,27 @@ DELETE FROM SimpleEmployeeView
 WHERE Emp_id = 11;
 
 DROP VIEW SimpleEmployeeView;
+
+-- Create a complex view combining Employee, Department, and Project details
+CREATE VIEW ComplexEmployeeProjectView AS
+SELECT 
+    e.Emp_id,
+    e.Emp_fname,
+    e.Emp_lname,
+    e.Emp_position,
+    e.Emp_salary,
+    d.Dept_name,
+    d.Location AS Dept_Location,
+    p.Proj_name,
+    p.Proj_Location,
+    p.Proj_Cost
+FROM 
+    Employee e
+INNER JOIN 
+    Dept d ON e.Dept_id = d.Dept_id
+INNER JOIN 
+    Project p ON e.Dept_id = p.Dept_id;
+
+-- Select data from the ComplexEmployeeProjectView
+SELECT * FROM ComplexEmployeeProjectView;
+
