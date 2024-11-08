@@ -12,6 +12,7 @@ class Client{
         // StringBuilder sb;
         do
         {
+            System.out.println("Enter the Message: ");
             msg = keyb.readLine();
             ps.println(msg);
             msg = br.readLine();
@@ -34,7 +35,7 @@ public class ReverseEcho {
         {
             msg = br.readLine();
             StringBuilder sb = new StringBuilder(msg);
-            sb.reverse();
+            // sb.reverse();
             msg = sb.toString();
             ps.println(msg);
         }while(!msg.equals("dne"));
