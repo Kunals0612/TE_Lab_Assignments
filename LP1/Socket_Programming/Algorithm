@@ -1,0 +1,46 @@
+Algorithm for the Client Class
+
+	Establish Connection:
+
+	Create a Socket to connect to the server at localhost on port 2000.
+
+	Initialize Input and Output Streams:
+
+	Set up a BufferedReader to read user input from the keyboard.
+	Set up another BufferedReader to receive messages from the server through the socket’s input stream.
+	Set up a PrintStream to send messages to the server through the socket’s output stream.
+
+	Communication Loop:
+
+	Repeat the following steps until the received message from the server is "dne":
+	Prompt the user to enter a message.
+	Read the user’s input and send it to the server using PrintStream.println().
+	Receive a response from the server using BufferedReader.readLine().
+	Display the server’s response on the console.
+
+	Close Connection:
+
+	Close the socket to end the connection with the server.
+	
+Algorithm for the ReverseEcho Server Class
+
+	Start Server Socket:
+
+	Create a ServerSocket that listens on port 2000 for client connections.
+	Wait for Client Connection:
+
+	Use accept() to wait until a client connects. When a client connects, it returns a Socket that represents the connection to the client.
+	Initialize Input and Output Streams:
+
+	Set up a BufferedReader to receive messages from the client through the socket’s input stream.
+	Set up a PrintStream to send messages back to the client through the socket’s output stream.
+	
+	Communication Loop:
+
+	Repeat the following steps until the received message from the client is "dne":
+	Read the message sent by the client using BufferedReader.readLine().
+	(Optional) Reverse the message using a StringBuilder (if reversal is desired, uncomment the reverse() line).
+	Send the (reversed or original) message back to the client using PrintStream.println().
+	Close Connection (optional):
+
+	Although not explicitly coded here, you would typically close the server and client sockets after "dne" is received, ending the server’s connection with the client.
