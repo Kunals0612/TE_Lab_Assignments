@@ -1,72 +1,112 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-void findWaitingTime(int process[], int n, int wt[], int burst_time[], int quantum)
-{
-    int remainingTime[n];
-    for (int i = 0; i < n; i++)
-    {
-        remainingTime[i] = burst_time[i];
-    }
-    int time = 0;
-    while(1)
-    {
-        bool Taskdone = true;
-        for (int i = 0; i < n; i++)
-        {
-            if (remainingTime[i] > 0)
-            {
-                Taskdone = false;
-                if(remainingTime[i] > quantum)
-                {
-                    time += quantum;
-                    remainingTime[i] -= quantum;
-                }
-                else
-                {
-                    time += remainingTime[i];
 
-                    wt[i] = time - burst_time[i];
+class Process {
+public:
+    int process_id;
+    int burst_time;
+    int arrival_time;
 
-                    remainingTime[i] = 0;
+    Process(int id, int bt, int at) : process_id(id), burst_time(bt), arrival_time(at) {}
+};
+
+class RoundRobin {
+    vector<Process> processes;
+    int quantum;
+
+public:
+    RoundRobin(vector<Process>& procs, int q) : processes(procs), quantum(q) {}
+
+    void findWaitingTime(vector<int>& wt) {
+        int n = processes.size();
+        vector<int> remainingTime(n);
+        for (int i = 0; i < n; i++) {
+            remainingTime[i] = processes[i].burst_time;
+        }
+
+        int time = 0;
+        vector<pair<int, int>> ganttChart; // (Process ID, execution time slice)
+
+        while (true) {
+            bool taskDone = true;
+
+            for (int i = 0; i < n; i++) {
+                if (remainingTime[i] > 0) {
+                    taskDone = false;
+
+                    if (remainingTime[i] > quantum) {
+                        time += quantum;
+                        ganttChart.push_back({processes[i].process_id, quantum});
+                        remainingTime[i] -= quantum;
+                    } else {
+                        time += remainingTime[i];
+                        ganttChart.push_back({processes[i].process_id, remainingTime[i]});
+                        remainingTime[i] = 0;
+                    }
                 }
             }
+
+            if (taskDone)
+                break;
         }
-        if(Taskdone == true)
-        {
-            break;
+
+        // Display the Gantt Chart
+        cout << "\nGantt Chart:\n";
+       
+        for (const auto& entry : ganttChart) {
+            cout << "| P" << entry.first << " (" << entry.second << " ms) ";
+        }
+        cout << "|\n";
+    
+        cout << endl;
+    }
+
+    void findTurnAroundTime(const vector<int>& wt, vector<int>& tat) {
+        int n = processes.size();
+        for (int i = 0; i < n; i++) {
+            tat[i] = processes[i].burst_time + wt[i];
         }
     }
 
-}
-void findTat(int process[], int n, int tat[], int burst_time[], int wt[], int quantum)
-{
-    for (int i = 0; i < n; i++)
-    {
-        tat[i] = burst_time[i] + wt[i];
-    }
-}
-void findAvgTime(int process[], int n, int burst_time[], int quantum)
-{
-    // cout<<"Hello"<<endl;
-    int wt[n], tat[n], total_tat=0, total_wt=0;
-    findWaitingTime(process, n, wt, burst_time, quantum);
-    findTat(process, n, tat, burst_time, wt, quantum);
+    void findAvgTime() {
+        int n = processes.size();
+        vector<int> wt(n), tat(n);
+        int total_wt = 0, total_tat = 0;
 
-    cout << "Process \t" << "Burst_Time \t" << "Turn Around Time\t" << "Waiting Time \t" << endl;
-    for(int i = 0; i < n; i++)
-    {
-        total_wt = total_wt + wt[i];
-        total_tat = total_tat + tat[i];
-        cout << " " << i + 1 << "\t\t" << burst_time[i] << "\t\t" << tat[i] << "\t\t\t" << wt[i]<<endl;
+        findWaitingTime(wt);
+        findTurnAroundTime(wt, tat);
+
+        cout << "Process \tBurst_Time \tTurn Around Time\tWaiting Time\n";
+        for (int i = 0; i < n; i++) {
+            total_wt += wt[i];
+            total_tat += tat[i];
+            cout << " " << processes[i].process_id << "\t\t" << processes[i].burst_time
+                 << "\t\t" << tat[i] << "\t\t\t" << wt[i] << endl;
+        }
+
+        cout << "Average waiting time = " << (float)total_wt / (float)n << endl;
+        cout << "Average turn around time = " << (float)total_tat / (float)n << endl;
     }
-    cout << "Average waiting time = " << (float)total_wt / (float)n;
-    cout << "\nAverage turn around time = " << (float)total_tat / (float)n;
-}
-int main()
-{
-    int process[] = {1, 2, 3};
-    int burst_time[] = {8, 7, 6};
-    int quantum = 2;
-    findAvgTime(process, 3, burst_time, quantum);
+};
+
+int main() {
+    int n, quantum;
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    cout << "Enter time quantum: ";
+    cin >> quantum;
+
+    vector<Process> processes;
+    for (int i = 0; i < n; i++) {
+        int id, burst_time, arrival_time;
+        cout << "Enter Process Id, burst time and arrival time for process " << i + 1 << ": ";
+        cin >> id >> burst_time >> arrival_time;
+        processes.push_back(Process(id, burst_time, arrival_time));
+    }
+
+    RoundRobin rr(processes, quantum);
+    rr.findAvgTime();
+
     return 0;
 }

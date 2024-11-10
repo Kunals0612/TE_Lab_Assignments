@@ -1,76 +1,106 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-void findCompletionTime(vector<int>& comp, vector<int>& BT)
-{
-    comp[0] = BT[0];
-    for (int i = 1; i < BT.size(); i++)
-    {
-        comp[i] = comp[i - 1] + BT[i];
+
+// Class to represent each process with ID, Arrival Time, and Burst Time
+class Process {
+public:
+    int PID;   // Process ID
+    int AT;    // Arrival Time
+    int BT;    // Burst Time
+
+    Process(int id, int arrival, int burst) : PID(id), AT(arrival), BT(burst) {}
+};
+
+// FCFS (First Come First Serve) scheduling class
+class FCFS {
+public:
+    vector<Process> processes;
+
+    FCFS(const vector<Process>& proc) : processes(proc) {}
+
+    // Function to find completion times
+    void findCompletionTime(vector<int>& comp) {
+        comp[0] = processes[0].BT;
+        for (int i = 1; i < processes.size(); i++) {
+            comp[i] = comp[i - 1] + processes[i].BT;
+        }
     }
-}
-void findTurnAroundTime(vector<int>& TAT, vector<int>& comp, vector<int>& AT)
-{
-    for (int i = 0; i < AT.size(); i++)
-    {
-        TAT[i] = comp[i] - AT[i];
+
+    // Function to find Turn Around Time (TAT)
+    void findTurnAroundTime(vector<int>& TAT, const vector<int>& comp) {
+        for (int i = 0; i < processes.size(); i++) {
+            TAT[i] = comp[i] - processes[i].AT;
+        }
     }
-}
-void findWeightTime(vector<int>& WT, vector<int>& TAT, vector<int>& BT)
-{
-    for (int i = 0; i < BT.size(); i++)
-    {
-        WT[i] = TAT[i] - BT[i];
+
+    // Function to find Waiting Time (WT)
+    void findWaitingTime(vector<int>& WT, const vector<int>& TAT) {
+        for (int i = 0; i < processes.size(); i++) {
+            WT[i] = TAT[i] - processes[i].BT;
+        }
     }
-}
-void findAvgTime(vector<int>& PID, vector<int>& BT, int n, vector<int> AT)
-{
-    vector<int> comp(n);
-    vector<int> TAT(n);
-    vector<int> WT(n);
-    findCompletionTime(comp, BT);
-    findTurnAroundTime(TAT, comp, AT);
-    findWeightTime(WT, TAT, BT);
-    float total_tat = 0;
-    float total_wt = 0;
-    cout << "PID" << "   " << "AT" << "   " << "BT" << "   " << "CT" << "   " << "TAT" << "   " << "WT" << endl;
-    for (int i = 0; i < n; i++)
-    {
-        cout << PID[i] << "   " << AT[i] << "   " << BT[i] << "   " << comp[i] << "   " << TAT[i] << "   " << WT[i] << endl;
-        total_tat += TAT[i];
-        total_wt += WT[i];
+
+    // Function to calculate and display the average Turn Around Time and Waiting Time
+    void findAvgTime() {
+        int n = processes.size();
+        vector<int> comp(n), TAT(n), WT(n);
+        
+        findCompletionTime(comp);
+        findTurnAroundTime(TAT, comp);
+        findWaitingTime(WT, TAT);
+
+        float total_tat = 0, total_wt = 0;
+        cout << "PID" << "   " << "AT" << "   " << "BT" << "   " << "CT" << "   " << "TAT" << "   " << "WT" << endl;
+        for (int i = 0; i < n; i++) {
+            cout << processes[i].PID << "     " << processes[i].AT << "     " << processes[i].BT << "     " 
+                 << comp[i] << "     " << TAT[i] << "     " << WT[i] << endl;
+            total_tat += TAT[i];
+            total_wt += WT[i];
+        }
+        cout << "AVG TAT: " << total_tat / n << endl;
+        cout << "AVG WT: " << total_wt / n << endl;
     }
-    cout << "AVG TAT: " << total_tat / n << endl;
-    cout << "AVG WT: " << total_wt / n << endl;
-}
-void scheduleTask(vector<int>& schedule, vector<int>& AT, vector<int>& PID)
-{
-    vector<pair<int, int>> pr;
-    for (int i = 0; i < PID.size(); i++)
-    {
-        pr.push_back(make_pair(AT[i], PID[i]));
+
+    // Function to schedule tasks by sorting by Arrival Time
+    void scheduleTask(vector<int>& schedule) {
+        vector<pair<int, int>> pr;
+        for (const auto& p : processes) {
+            pr.push_back({p.AT, p.PID});
+        }
+
+        // Sort by arrival time
+        sort(pr.begin(), pr.end());
+        
+        for (const auto& p : pr) {
+            schedule.push_back(p.second);
+        }
+        
+        cout << "Scheduled Order (by PID): ";
+        for (int pid : schedule) {
+            cout << pid << " ";
+        }
+        cout << endl;
     }
-    for (int i = 0; i < pr.size(); i++)
-    {
-        cout << pr[i].first << " " << pr[i].second << endl;
+};
+
+int main() {
+    int n;
+    cout << "Enter the number of processes: ";
+    cin >> n;
+
+    vector<Process> processes;
+    for (int i = 0; i < n; i++) {
+        int pid, at, bt;
+        cout << "Enter Process ID, Arrival Time, and Burst Time for Process " << i + 1 << ": ";
+        cin >> pid >> at >> bt;
+        processes.push_back(Process(pid, at, bt));
     }
-    sort(pr.begin(), pr.end());
-    for (int i = 0; i < PID.size(); i++)
-    {
-        schedule.push_back(pr[i].second);
-    }
-    for (int i = 0; i < schedule.size(); i++)
-    {
-        cout << schedule[i] << " ";
-    }
-}
-int main()
-{
-    vector<int> PID = {1, 2, 3};
-    vector<int> AT = {7, 3, 7};
-    vector<int> BT = {500, 100, 50};
-    int n = PID.size();
-    findAvgTime(PID, BT, n, AT);
+    
+    FCFS scheduler(processes);
+    scheduler.findAvgTime();
+
     vector<int> schedule;
-    scheduleTask(schedule, AT, PID);
+    scheduler.scheduleTask(schedule);
+    
     return 0;
 }
