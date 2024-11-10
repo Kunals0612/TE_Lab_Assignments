@@ -59,14 +59,14 @@ class Election{
             return coordinator;
         }
 
-        int findPosition(int id){
-            for(int i=0; i<num; i++){
-                if(p[i].id == id){
-                    return i;
-                }
-            }
-            return 0;
-        }
+        // int findPosition(int id){
+        //     for(int i=0; i<num; i++){
+        //         if(p[i].id == id){
+        //             return i;
+        //         }
+        //     }
+        //     return 0;
+        // }
         
         void ring(Process coordinator, int crashed){
             vector<int> vec;

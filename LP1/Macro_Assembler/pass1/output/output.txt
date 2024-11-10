@@ -1,3 +1,16 @@
+
+MOVER &REG (P,1) 
+ADD &REG (P,2) 
+MOVEM &REG (P,1) 
+MEND 
+MOVER &REG (P,1) 
+ADD &REG (P,2) 
+MOVEM &REG (P,1) 
+MEND 
+MOVER &REG (P,1) 
+ADD &REG (P,2) 
+MOVEM &REG (P,1) 
+MEND 
 MOVER &REG (P,1) 
 ADD &REG (P,2) 
 MOVEM &REG (P,1) 

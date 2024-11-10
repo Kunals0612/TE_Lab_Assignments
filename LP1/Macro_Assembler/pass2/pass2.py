@@ -26,7 +26,7 @@ KeywordParamDefaultTable = {
 }
 
 # File handling
-with open('LP1/Macro_Assembler/pass2/input/calls.asm', 'r') as callFile, open('LP1/Macro_Assembler/pass2/input/output.txt', 'r') as mdtFile, open('LP1/Macro_Assembler/pass2/output/output.asm', 'a') as finalFile:
+with open('/home/kunal/TE_Lab_Assignments/LP1/Macro_Assembler/pass2/input/calls.asm', 'r') as callFile, open('/home/kunal/TE_Lab_Assignments/LP1/Macro_Assembler/pass2/input/output.txt', 'r') as mdtFile, open('/home/kunal/TE_Lab_Assignments/LP1/Macro_Assembler/pass2/output/output.asm', 'a') as finalFile:
 
     def get_key(val: str, dictionary: dict) -> any:
         for key, value in dictionary.items():
