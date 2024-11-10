@@ -1,46 +1,35 @@
-Algorithm for the Client Class
+Algorithm for Reverse Echo Server and Client
+1. Server (ReverseEchoServer.java)
+Initialize Server Socket:
+	Create a ServerSocket object listening on a predefined port (e.g., 2000).
+	Display a message indicating that the server has started.
+Accept Incoming Connections:
+	Use the accept() method to listen for incoming client connections.
+	When a client connects, create a new socket for communication with that client.
+Create Client Handler:
+For each client connection:
+	Create a new thread to handle communication with the client.
+	The thread will run the ClientHandler class, which manages the client’s input and output.
+2. Client Handler (ClientHandler.java)
+For each client connection:
 
-	Establish Connection:
-
-	Create a Socket to connect to the server at localhost on port 2000.
-
-	Initialize Input and Output Streams:
-
-	Set up a BufferedReader to read user input from the keyboard.
-	Set up another BufferedReader to receive messages from the server through the socket’s input stream.
-	Set up a PrintStream to send messages to the server through the socket’s output stream.
-
-	Communication Loop:
-
-	Repeat the following steps until the received message from the server is "dne":
-	Prompt the user to enter a message.
-	Read the user’s input and send it to the server using PrintStream.println().
-	Receive a response from the server using BufferedReader.readLine().
-	Display the server’s response on the console.
-
-	Close Connection:
-
-	Close the socket to end the connection with the server.
-	
-Algorithm for the ReverseEcho Server Class
-
-	Start Server Socket:
-
-	Create a ServerSocket that listens on port 2000 for client connections.
-	Wait for Client Connection:
-
-	Use accept() to wait until a client connects. When a client connects, it returns a Socket that represents the connection to the client.
-	Initialize Input and Output Streams:
-
-	Set up a BufferedReader to receive messages from the client through the socket’s input stream.
-	Set up a PrintStream to send messages back to the client through the socket’s output stream.
-	
-	Communication Loop:
-
-	Repeat the following steps until the received message from the client is "dne":
-	Read the message sent by the client using BufferedReader.readLine().
-	(Optional) Reverse the message using a StringBuilder (if reversal is desired, uncomment the reverse() line).
-	Send the (reversed or original) message back to the client using PrintStream.println().
-	Close Connection (optional):
-
-	Although not explicitly coded here, you would typically close the server and client sockets after "dne" is received, ending the server’s connection with the client.
+Create input and output streams (BufferedReader and PrintWriter).
+Continuously read the incoming message from the client.
+If the message is "end", break out of the loop and close the socket.
+Otherwise, reverse the received message using StringBuilder.
+Send the reversed message back to the client.
+Close Connections:
+After the client disconnects or sends "end", close the input/output streams and the client socket.
+3. Client (Client.java)
+Connect to Server:
+Create a Socket object to connect to the server using the server’s IP address and port.
+Create input and output streams (BufferedReader and PrintWriter) to communicate with the server.
+User Input and Sending Messages:
+Prompt the user to input a message.
+Continuously read the user’s message and send it to the server.
+If the message is "end", exit the loop and close the connection.
+Receive and Display Reversed Message:
+After sending the message to the server, wait for the reversed message from the server.
+Print the reversed message from the server.
+Close Connection:
+Close the socket and streams after the client exits or sends "end".

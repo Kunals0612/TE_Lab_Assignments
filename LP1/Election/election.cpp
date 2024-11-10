@@ -22,45 +22,40 @@ class Election{
         Election(int num){
             this->num = num;
             this->p = new Process[num];
-            for(int i=1; i<=num; i++){
+            for(int i=0; i<num; i++){
                 p[i].id = i;
             }
             this->flag = new int[5];
+            cout<<"Process are: "<<endl;
+            for(int i=0; i<num; i++){
+                cout<<p[i].id<<" ";
+            }cout<<endl;
+
         }
         
         Process bully(Process coordinator, int crashed){
-            
-
             for(int i=0; i<num; i++){
                 flag[i] = 0;
             }
 
             flag[crashed] = 1;
 
-            for(int i=1; i<=num; i++){
-                if(p[i].id > coordinator.id){
+            for(int i=0; i<num; i++){
+                if(p[i].id >= coordinator.id){
                     if(flag[i] != 1){
                         cout<<"Election message sent to: "<<p[i].id<<endl;
                     }
                 }else{
-                    flag[i] = 1;
+                    flag[i] = 1;    
                 }
             }
-
-            for(int i=1; i<=num; i++){
-                if(flag[i] != 1 && p[i].id > coordinator.id){
+            for(int i=0; i<num; i++){
+                if(flag[i] != 1 && p[i].id >= coordinator.id){
                     cout<<"The Process has been handovered to the "<<p[i].id<<endl;
                     flag[coordinator.id] = 1;
-                    coordinator = p[i].id;
+                    coordinator = p[i].id;  
                 }
-            }
-
-            for(int i=1; i<=num; i++){
-                if(flag[i] == 0){
-                    coordinator = bully(coordinator,crashed);
-                }
-            }
-
+            }        
             return coordinator;
         }
 
@@ -75,7 +70,7 @@ class Election{
         
         void ring(Process coordinator, int crashed){
             vector<int> vec;
-            int pos = findPosition(coordinator.id);
+            int pos = coordinator.id;
             int count = 0, i = pos;
             while(count < num){
                 if(i != crashed){
@@ -85,8 +80,8 @@ class Election{
                 count++;
             }
             int coordinator_id = *max_element(vec.begin(), vec.end());
-            int finalCoordinator = findPosition(coordinator_id);
-            cout<<"Final coordinator is: "<<p[finalCoordinator].id<<endl;
+            int finalCoordinator = coordinator_id;
+            cout<<"Final coordinator is: "<<finalCoordinator<<endl;
         }
 
 };
