@@ -1,9 +1,0 @@
----	 -No Machine Code-
-200	04	R	---
-201	05	R	---
-202	04	R	---
-203	 -No Machine Code-
-205	 -No Machine Code-
-206	 -No Machine Code-
-207		D	---
----	 -No Machine Code-
