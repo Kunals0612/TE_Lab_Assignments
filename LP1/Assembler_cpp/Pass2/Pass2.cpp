@@ -46,9 +46,9 @@ int main()
 			else
 			{
 				if(ic3.substr(1, 1) == "S") // for symbols
-					MC = ic1.substr(4, 2) + "\t" + ic2.substr(1, 1) + "\t" + table(st, ic3.substr(3, 1));
+					MC = ic1.substr(4, 2) + "\t" + ic2.substr(1, 1) + "\t" + table(st, ic3.substr(4, 1));
 				else // for literals
-					MC = ic1.substr(4, 2) + "\t" + ic2.substr(1, 1) + "\t" + table(lt, ic3.substr(3, 1));
+					MC = ic1.substr(4, 2) + "\t" + ic2.substr(1, 1) + "\t" + table(lt, ic3.substr(4, 1));
 			}
 		}
 		if(ic1 == "(AD,03)") // just for console output display format

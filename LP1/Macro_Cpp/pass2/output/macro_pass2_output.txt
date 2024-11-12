@@ -1,0 +1,11 @@
+
+--- APTAB for Macro Call M2 ---
+1: 100
+2: 200
+3: BREG
+4: AREG
+Expanded Code
+MOVER BREG 100 
+MOVER AREG 200 
+ADD BREG ='15' 
+ADD AREG ='10' 
