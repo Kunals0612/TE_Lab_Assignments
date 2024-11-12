@@ -1,178 +1,68 @@
-#include <iostream>
-#include <map>
-#include <fstream>
-#include <vector>
-#include <sstream>
-
+#include <bits/stdc++.h>
 using namespace std;
 
-class Assembler
+string table(ifstream &fin, string n)
 {
-private:
-    map<string, string> Symtab;
-    map<string, string> Littab;
-
-public:
-    Assembler() {}
-
-    vector<string> tokenize(string s)
-    {
-        vector<string> v;
-        string x;
-        stringstream ss(s);
-        while (getline(ss, x, ' '))
-        {
-            if (!x.empty())
-                v.push_back(x);
-        }
-        return v;
-    }
-
-    void readTables(string filename)
-    {
-        ifstream f(filename);
-        string s;
-        while (getline(f, s))
-        {
-            vector<string> token = tokenize(s);
-            if (filename == "symtab.txt")
-            {
-                Symtab[token[0]] = token[2]; // Assume that symtab.txt format has: label, type, address
-            }
-            else
-            {
-                Littab[token[0]] = token[2]; // Assume that ltab.txt format has: label, type, address
-            }
-        }
-    }
-
-    void pass2()
-    {
-        ifstream f("./input/input.txt");
-        ofstream w("./output/machineCode.txt");
-        string s;
-
-        while (getline(f, s))
-        {
-            int cnt = 0;
-            if (s.length() > 0)
-            {
-                cout << s << endl;
-                vector<string> token = tokenize(s);
-                string write;
-                int n = token.size();
-                bool flag = true;
-
-                for (int i = 0; i < n; i++)
-                {
-                    string op1 = "", op2 = "";
-                    bool parsingOp1 = true; // Track whether we are parsing the first operand (before comma) or the second (after comma)
-
-                    for (int j = 0; j < token[i].length(); j++)
-                    {
-                        if (token[i][j] == '(')
-                        {
-                            continue;
-                        }
-                        else if (token[i][j] == ',')
-                        {
-                            parsingOp1 = false; // After comma, start parsing the second operand
-                        }
-                        else
-                        {
-                            if (parsingOp1)
-                                op1 += token[i][j];
-                            else if (token[i][j] != ')')
-                            {
-                                op2 += token[i][j];
-                            }
-                        }
-                    }
-                    cout << op1 << " " << op2 << " " << cnt << endl;
-
-                    // Processing each operand and generating the corresponding machine code
-                    if (cnt == 1)
-                    {
-                        if (op1 == "RG")
-                        {
-                            write += "(" + op2 + ")";
-                            cnt++;
-                            continue;
-                        }
-                        else
-                        {
-                            write += "(00)";
-                            cnt++;
-                        }
-                    }
-
-                    // Handle the various operand types
-                    if (op1 == "AD")
-                    {
-                        if (n == 2 || n == 1)
-                        {
-                            flag = false;
-                            break;
-                        }
-                        else
-                        {
-                            write += "(00) ";
-                            cnt++;
-                        }
-                    }
-                    else if (op1 == "DL")
-                    {
-                        if (cnt == 0 && op2 == "02")
-                        {
-                            flag = 0;
-                            break;
-                        }
-                        else
-                        {
-                            write += "(00)";
-                            cnt++;
-                        }
-                    }
-                    else if (op1 == "S")
-                    {
-                        if (Symtab.find(op2) != Symtab.end() && cnt > 0) // If symbol exists in Symtab
-                        {
-                            write += "(" + Symtab[op2] + ") ";
-                            cout << Symtab[op2] << endl;
-                            cnt++;
-                        }
-                    }
-                    else if (op1 == "L")
-                    {
-                        if (Littab.find(op2) != Littab.end() && cnt > 0) // If literal exists in Littab
-                        {
-                            write += "(" + Littab[op2] + ") ";
-                            cout << Littab[op2] << endl;
-                            cnt++;
-                        }
-                    }
-                    else
-                    {
-                        write += "(" + op2 + ") ";
-                        cnt++;
-                    }
-                }
-
-                if (flag)
-                {
-                    w << write << endl;
-                }
-            }
-        }
-    }
-};
+	string no, name, addr;
+	while(fin >> no >> name >> addr)
+	{
+		if(no == n)
+		{
+			fin.seekg(0, ios::beg);
+			return addr;
+		}
+	}
+	fin.seekg(0, ios::beg);
+	return "---";
+}
 
 int main()
 {
-    string s = "./input/SymTab.txt"; // Symbol table file
-    string l = "./input/LiTab.txt";   // Literal table file
-    Assembler a;
-    a.readTables(s); // Read symbol table
-    a.readTables(l); // Read literal table
-    a.pass2();       // Perform pass 2 and write machine code
+	ifstream ic, st, lt;
+	ic.open("./input/input.txt"); st.open("./input/SymTab.txt"); lt.open("./input/LitTab.txt");
+
+	ofstream mc;
+	mc.open("./output/machineCode.txt");
+
+	string lc, ic1, ic2, ic3;
+	cout << "\n -- ASSEMBLER PASS-2 OUTPUT --" << endl;
+	cout << "\n LC\t <INTERMEDIATE CODE>\t\t\tLC\t <MACHINE CODE>" << endl;
+
+	while(ic >> lc >> ic1 >> ic2 >> ic3)
+	{
+		string MC; 
+
+		if(ic1.substr(1, 2) == "AD" || (ic1.substr(1, 2) == "DL" && ic1.substr(4, 2) == "02"))
+			MC = " -No Machine Code-";
+
+		// if opcode is DL i.e. DL,01 then display constant value at the place of memory operand
+		else if(ic1.substr(1, 2) == "DL" && ic1.substr(4, 2) == "01")
+		{
+			MC = "00\t0\t00" + ic2.substr(3, 1);
+		}
+		else // IS opcode
+		{
+			if(ic1 == "(IS,00)") // specifically for STOP
+				MC = ic1.substr(4, 2) + "\t0\t000";
+			else if(ic2.substr(1, 1) == "S") // if opcode in pass1 was ORIGIN
+				MC = ic1.substr(4, 2) + "\t0\t" + table(st, ic2.substr(4, 1));
+			else
+			{
+				if(ic3.substr(1, 1) == "S") // for symbols
+					MC = ic1.substr(4, 2) + "\t" + ic2.substr(1, 1) + "\t" + table(st, ic3.substr(4, 1));
+				else // for literals
+					MC = ic1.substr(4, 2) + "\t" + ic2.substr(1, 1) + "\t" + table(lt, ic3.substr(4, 1));
+			}
+		}
+		if(ic1 == "(AD,03)") // just for console output display format
+		{
+			cout << " " << lc << "\t" << ic1 << "\t" << ic2 << " " << ic3 << "\t\t\t" << lc << "\t" << MC << endl;
+			mc << lc << "\t" << MC << endl;
+			continue;
+		}
+		// console output
+		cout << " " << lc << "\t" << ic1 << "\t" << ic2 << "\t " << ic3 << "\t\t\t" << lc << "\t" << MC << endl;
+		mc << lc << "\t" << MC << endl;
+	}
+	return 0;
 }
