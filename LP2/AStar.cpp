@@ -9,7 +9,7 @@ public:
     int cost;
     int level;
 };                                                                                                                                                                                                                                                                                                                                                                                              
-int printMatrix(int mat[N][N], int& steps){ 
+int printMatrix(int mat[N][N], int& steps, int g, int h){ 
     steps++;
     for (int i = 0; i < N; i++){
         for (int j = 0; j < N; j++){
@@ -17,6 +17,7 @@ int printMatrix(int mat[N][N], int& steps){
         }
         cout<<endl;
     }
+    cout<<"f(n) = "<<g+h<<" g(n) = "<<g<<" h(n) = "<<h<<endl;
 }
 Node *newNode(int mat[N][N], int x, int y, int newX,
               int newY, int level, Node *parent){
@@ -54,7 +55,7 @@ void printPath(Node *root, int &steps){
     if (root == NULL)
         return;
     printPath(root->parent,steps);
-    printMatrix(root->mat,steps);
+    printMatrix(root->mat,steps,root->level,root->cost);
 
     cout<<endl;
 }
