@@ -9,11 +9,13 @@ public:
     int cost;
     int level;
 };                                                                                                                                                                                                                                                                                                                                                                                              
-int printMatrix(int mat[N][N]){ 
+int printMatrix(int mat[N][N], int& steps){ 
+    steps++;
     for (int i = 0; i < N; i++){
-        for (int j = 0; j < N; j++)
-            printf("%d ", mat[i][j]);
-        printf("\n");
+        for (int j = 0; j < N; j++){
+            cout<<mat[i][j]<<" ";
+        }
+        cout<<endl;
     }
 }
 Node *newNode(int mat[N][N], int x, int y, int newX,
@@ -34,10 +36,13 @@ int col[] = {0, -1, 0, 1};
 
 int calculateCost(int initial[N][N], int final[N][N]){
     int count = 0;
-    for (int i = 0; i < N; i++)
-        for (int j = 0; j < N; j++)
-            if (initial[i][j] && initial[i][j] != final[i][j])
+    for (int i = 0; i < N; i++){
+        for (int j = 0; j < N; j++){
+            if (initial[i][j] && initial[i][j] != final[i][j]){
                 count++;
+            }
+        }
+    }
     return count;
 }
 
@@ -45,11 +50,11 @@ int isSafe(int x, int y){
     return (x >= 0 && x < N && y >= 0 && y < N);
 }
 
-void printPath(Node *root){
+void printPath(Node *root, int &steps){
     if (root == NULL)
         return;
-    printPath(root->parent);
-    printMatrix(root->mat);
+    printPath(root->parent,steps);
+    printMatrix(root->mat,steps);
 
     cout<<endl;
 }
@@ -62,7 +67,7 @@ struct comp{
 
 void solve(int initial[N][N], int x, int y,
            int final[N][N]){
-
+    int steps = 0;
     priority_queue<Node *, std::vector<Node *>, comp> pq;
     Node *root = newNode(initial, x, y, x, y, 0, NULL);
     root->cost = calculateCost(initial, final);
@@ -70,8 +75,10 @@ void solve(int initial[N][N], int x, int y,
     while (!pq.empty()){
         Node *min = pq.top();
         pq.pop();
+        
         if (min->cost == 0){
-            printPath(min);
+            printPath(min,steps);
+            cout<<"Total Steps: "<<steps<<endl;
             return;
         }
         for (int i = 0; i < 4; i++){
@@ -100,7 +107,7 @@ int main()
             }
         }
     }
-
+    cout<<endl;
     int final[N][N];
     cout << "Enter final state: " << endl;
     for (int i = 0; i < N; i++){
@@ -108,7 +115,7 @@ int main()
             cin >> final[i][j];
         }
     }
-
+    cout<<endl;
     solve(initial, x, y, final);
 
     return 0;
