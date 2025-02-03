@@ -43,7 +43,7 @@ public:
 
 int main()
 {
-    int V = 5; // Number of vertices
+    int V = 6; // Number of vertices
     vector<vector<int>> edges;
     int edge;
 
@@ -59,15 +59,15 @@ int main()
     }
 
     // Print the 2D vector of edges
-    cout << "Edges entered:" << endl;
-    for (const auto &edge : edges)
-    {
-        for (int val : edge)
-        {
-            cout << val + 1 << " "; // Convert back to 1-based for output
-        }
-        cout << endl;
-    }
+    // cout << "Edges entered:" << endl;
+    // for (const auto &edge : edges)
+    // {
+    //     for (int val : edge)
+    //     {
+    //         cout << val + 1 << " "; // Convert back to 1-based for output
+    //     }
+    //     cout << endl;
+    // }
 
     // Adjacency list representation
     vector<vector<int>> adj[V];
