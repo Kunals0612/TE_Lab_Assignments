@@ -27,12 +27,10 @@ public:
             sum += wt;
 
             // Traverse all adjacent nodes
-            for (auto it : adj[node])
-            {
+            for (auto it : adj[node]){
                 int adjNode = it[0];
                 int edWt = it[1];
-                if (!vis[adjNode])
-                {
+                if (!vis[adjNode]){
                     pq.push({edWt, adjNode});
                 }
             }
