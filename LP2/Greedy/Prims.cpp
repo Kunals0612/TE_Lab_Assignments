@@ -6,9 +6,7 @@ class Solution
 public:
     int spanningTree(int V, vector<vector<int>> adj[])
     {
-        priority_queue<pair<int, int>,
-                       vector<pair<int, int>>, greater<pair<int, int>>>
-            pq;
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>>pq;
         vector<int> vis(V, 0);
         // {weight, node}
         pq.push({0, 0});
