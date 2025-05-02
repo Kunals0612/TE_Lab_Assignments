@@ -40,7 +40,7 @@ important_keywords = [
 ]
 
 def get_synonyms(word):
-    synonyms = set()
+    synonyms = set() 
     for syn in wordnet.synsets(word):
         for lemma in syn.lemmas():
             synonyms.add(lemma.name().replace("_", " "))
