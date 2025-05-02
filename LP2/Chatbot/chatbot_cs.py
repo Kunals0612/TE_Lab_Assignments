@@ -15,7 +15,7 @@ faq = {
     "Where are you located?": "Our headquarters is in New York, with offices worldwide.",
     "Do you offer refunds?": "Yes, our refund policy lasts 30 days from the date of purchase.",
     "Can I track my order?": "Yes, use the tracking ID provided in your order confirmation email.",
-    "How long does shipping take?": "Shipping typically takes 3–7 business days depending on your location.",
+    "How long does shipping take?": "Shipping typically takes 3-7 business days depending on your location.",
     "What payment methods do you accept?": "We accept credit/debit cards, PayPal, and digital wallets.",
     "How do I reset my password?": "Click on 'Forgot Password' on the login page and follow the instructions.",
     "Can I change or cancel my order?": "Yes, within 24 hours of placing the order. Contact support for help.",
@@ -72,6 +72,9 @@ questions = list(faq.keys())
 normalized_questions = [normalize_question(q) for q in questions]
 vectorizer = TfidfVectorizer()
 tfidf_matrix = vectorizer.fit_transform(normalized_questions)
+
+print(normalized_questions)
+# print(tfidf_matrix)
 
 # Streamlit UI
 st.set_page_config(page_title="Customer InfoBot", page_icon="💬")
