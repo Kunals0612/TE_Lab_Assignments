@@ -1,3 +1,4 @@
+import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from nltk.corpus import wordnet
@@ -7,7 +8,7 @@ import nltk
 
 nltk.download('wordnet')
 
-# Step 1: Define expanded FAQ (20 questions)
+# Define FAQ
 faq = {
     "What courses do you offer?": "We offer undergraduate and postgraduate programs in science, arts, and technology.",
     "How do I apply for admission?": "You can apply online through our admissions portal.",
@@ -31,14 +32,12 @@ faq = {
     "Are online courses available?": "Yes, we offer several certified online courses."
 }
 
-# Step 2: Define domain-specific important keywords
 important_keywords = [
     "admission", "apply", "course", "fee", "location", "contact", "scholarship",
     "eligibility", "documents", "academic", "hostel", "deadline", "exam", "international",
     "teaching", "application", "part-time", "career", "campus", "online"
 ]
 
-# Step 3: Build a synonym map
 def get_synonyms(word):
     synonyms = set()
     for syn in wordnet.synsets(word):
@@ -61,7 +60,6 @@ def build_synonym_map(keywords):
 
 reverse_synonyms = build_synonym_map(important_keywords)
 
-# Step 4: Normalize input using synonym map
 def normalize_question(text):
     text = text.lower()
     for syn, canonical in reverse_synonyms.items():
@@ -69,21 +67,20 @@ def normalize_question(text):
         text = re.sub(pattern, canonical, text)
     return text
 
-# Step 5: TF-IDF setup
 questions = list(faq.keys())
 vectorizer = TfidfVectorizer()
 normalized_questions = [normalize_question(q) for q in questions]
 tfidf_matrix = vectorizer.fit_transform(normalized_questions)
 
-# Step 6: Chat loop
-print("Welcome to the Education InfoBot! Type 'exit' to quit.")
-while True:
-    user_question = input("You: ")
-    if user_question.lower() == 'exit':
-        print("Chatbot: Goodbye!")
-        break
+# Streamlit UI
+st.set_page_config(page_title="Education Chatbot", page_icon="\U0001F393")
+st.title("\U0001F393 Education InfoBot")
+st.write("Ask me anything about courses, admissions, fees, or campus info.")
 
-    normalized_input = normalize_question(user_question)
+user_input = st.text_input("You:", "")
+
+if user_input:
+    normalized_input = normalize_question(user_input)
     user_vec = vectorizer.transform([normalized_input])
     similarity = cosine_similarity(user_vec, tfidf_matrix)
 
@@ -91,7 +88,7 @@ while True:
     best_score = similarity[0][best_match_idx]
 
     if best_score < 0.3:
-        print("Chatbot: Sorry, I don't understand your question.")
+        st.error("🤖 Chatbot: Sorry, I don't understand your question.")
     else:
         matched_question = questions[best_match_idx]
-        print("Chatbot:", faq[matched_question])
+        st.success(f"🤖 Chatbot: {faq[matched_question]}")
