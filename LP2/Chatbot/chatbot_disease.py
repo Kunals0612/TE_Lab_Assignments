@@ -11,7 +11,6 @@ lemmatizer = WordNetLemmatizer()
 
 # Symptom-to-condition map (simple for demo purposes)
 disease_db = {
-    
     "cold": ["sneezing", "runny nose", "cough", "sore throat"],
     "flu": ["fever", "chills", "body ache", "fatigue", "cough"],
     "covid-19": ["fever", "dry cough", "loss of taste", "loss of smell", "breathing difficulty"],
@@ -20,7 +19,6 @@ disease_db = {
 }
 
 responses = {
-   
     "cold": "You might have a common cold. Stay warm and rest.",
     "flu": "Sounds like the flu. Make sure to stay hydrated.",
     "covid-19": "These symptoms match COVID-19. Please consider getting tested.",
