@@ -83,7 +83,8 @@ int main() {
     cout << "Enter edges (u v):\n";
     for (int i = 0; i < E; ++i) {
         int u, v;
-        cin >> u >> v;
+        cout<<"Enter u: "; cin >> u;
+        cout<<"Enter v: "; cin >> v;
         g.addEdge(u, v);
     }
 
