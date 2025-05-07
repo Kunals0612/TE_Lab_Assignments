@@ -1,144 +1,165 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#include <unordered_set>
+
 using namespace std;
-#define N 3  // Define the size of the puzzle (3x3 grid)
 
-// Node class to represent each state of the puzzle
-class Node{
-public:
-    Node *parent;  // Pointer to the parent node
-    int mat[N][N]; // Matrix representing the current state of the puzzle
-    int x, y;      // Coordinates of the blank space (0)
-    int cost;      // The cost (heuristic) for the node
-    int level;     // Level of the node (depth in the search tree)
-};
+// Define the puzzle size
+const int N = 3;
 
-// Function to print the puzzle matrix along with the cost and heuristic values
-int printMatrix(int mat[N][N], int& steps, int g, int h){ 
-    steps++;  // Increment the step count
-    for (int i = 0; i < N; i++){
-        for (int j = 0; j < N; j++){
-            cout<<mat[i][j]<<" ";  // Print the matrix element
-        }
-        cout<<endl;
-    }
-    cout<<"f(n) = "<<g+h<<" g(n) = "<<g<<" h(n) = "<<h<<endl; // Print f(n), g(n), h(n)
-}
+// Structure to represent a puzzle state
+struct PuzzleState
+{
+    int puzzle[N][N];
+    int zeroRow, zeroCol;
+    int g;
+    int h;
 
-// Function to create a new node by moving the blank space
-Node *newNode(int mat[N][N], int x, int y, int newX,
-              int newY, int level, Node *parent){
-    Node *node = new Node;  // Allocate memory for the new node
-    node->parent = parent;  // Set the parent node
-    memcpy(node->mat, mat, sizeof node->mat);  // Copy the matrix from the parent
-    swap(node->mat[x][y], node->mat[newX][newY]);  // Swap the blank space with the new position
-    node->cost = INT_MAX;  // Initialize the cost to a very large value
-    node->level = level;   // Set the level (depth)
-    node->x = newX;        // Update the x-coordinate of the blank space
-    node->y = newY;        // Update the y-coordinate of the blank space
-    return node;  // Return the new node
-}
-
-// Directional movement for the blank space (up, left, down, right)
-int row[] = {1, 0, -1, 0};
-int col[] = {0, -1, 0, 1};
-
-// Function to calculate the cost (heuristic) based on the number of misplaced tiles
-int calculateCost(int initial[N][N], int final[N][N]){
-    int count = 0;  // Initialize the count of misplaced tiles
-    for (int i = 0; i < N; i++){
-        for (int j = 0; j < N; j++){
-            if (initial[i][j] && initial[i][j] != final[i][j]){
-                count++;  // Increment count if the tile is misplaced
-            }
-        }
-    }
-    return count;  // Return the count of misplaced tiles
-}
-
-// Function to check if a move is safe (within bounds of the matrix)
-int isSafe(int x, int y){
-    return (x >= 0 && x < N && y >= 0 && y < N);  // Ensure the coordinates are within the grid bounds
-}
-
-// Function to print the path from the root node to the solution
-void printPath(Node *root, int &steps){
-    if (root == NULL)  // Base case: if the root is NULL, return
-        return;
-    printPath(root->parent,steps);  // Recursively print the path of the parent node
-    printMatrix(root->mat,steps,root->level,root->cost);  // Print the current state
-    cout<<endl;
-}
-
-// Comparator for the priority queue to prioritize nodes based on f(n) = g(n) + h(n)
-struct comp{
-    bool operator()(const Node *lhs, const Node *rhs) const{
-        return (lhs->cost + lhs->level) > (rhs->cost + rhs->level);  // Prioritize by f(n)
+    bool operator<(const PuzzleState &other) const
+    {
+        return (g + h) > (other.g + other.h);
     }
 };
 
-// Function to solve the puzzle using A* search
-void solve(int initial[N][N], int x, int y,
-           int final[N][N]){
-    int steps = 0;  // Initialize step count
-    priority_queue<Node *, std::vector<Node *>, comp> pq;  // Priority queue to store nodes (sorted by f(n))
-    
-    // Create the root node and set the initial cost (heuristic)
-    Node *root = newNode(initial, x, y, x, y, 0, NULL);
-    root->cost = calculateCost(initial, final);  // Calculate the initial heuristic cost
-    pq.push(root);  // Push the root node into the priority queue
-    
-    // A* search loop
-    while (!pq.empty()){
-        Node *min = pq.top();  // Get the node with the lowest f(n)
-        pq.pop();  // Remove it from the priority queue
-        
-        // If the cost is zero, the puzzle is solved
-        if (min->cost == 0){
-            printPath(min,steps);  // Print the path to the solution
-            cout<<"Total Steps: "<<steps<<endl;  // Print the total number of steps
-            return;
+void printPuzzle(const PuzzleState &state)
+{
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            cout << state.puzzle[i][j] << " ";
         }
-        
-        // Generate children by moving the blank space in all four directions
-        for (int i = 0; i < 4; i++){
-            if (isSafe(min->x + row[i], min->y + col[i])){  // Check if the move is safe
-                // Create a new node with the moved blank space
-                Node *child = newNode(min->mat, min->x,
-                                      min->y, min->x + row[i],
-                                      min->y + col[i],
-                                      min->level + 1, min);
-                child->cost = calculateCost(child->mat, final);  // Calculate the heuristic cost of the new state
-                pq.push(child);  // Push the new node into the priority queue
+        cout << endl;
+    }
+    cout << "-----\n";
+}
+
+bool isEqual(const PuzzleState &state1, const PuzzleState &state2) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if (state1.puzzle[i][j] != state2.puzzle[i][j]) 
+                return false;
+        }
+    }
+    return true;
+}
+
+int calculateManhattanDistance(const PuzzleState &state) {
+    int distance = 0;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            int value = state.puzzle[i][j];
+            if (value != 0) {
+                int targetRow = (value - 1) / N;
+                int targetCol = (value - 1) % N;
+                distance += abs(i - targetRow) + abs(j - targetCol);
+            }
+        }
+    }
+    return distance;
+}
+
+bool isValid(int row, int col) {
+    return (row >= 0 && row < N && col >= 0 && col < N);
+}
+
+vector<PuzzleState> generateNextStates(const PuzzleState &currentState) {
+    vector<PuzzleState> nextStates;
+    const int moves[4][2] = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}}; // Left, Right, Up, Down
+
+    for (int k = 0; k < 4; k++) {
+        int nextZeroRow = currentState.zeroRow + moves[k][0];
+        int nextZeroCol = currentState.zeroCol + moves[k][1];
+
+        if (isValid(nextZeroRow, nextZeroCol)) {
+            PuzzleState nextState = currentState;
+            swap(nextState.puzzle[currentState.zeroRow][currentState.zeroCol],
+                 nextState.puzzle[nextZeroRow][nextZeroCol]);
+            nextState.zeroRow = nextZeroRow;
+            nextState.zeroCol = nextZeroCol;
+            nextState.g = currentState.g + 1;
+            nextState.h = calculateManhattanDistance(nextState);
+            nextStates.push_back(nextState);
+        }
+    }
+
+    return nextStates;
+}
+
+void aStarSearch(const PuzzleState &initialState, const PuzzleState &finalState) {
+    priority_queue<PuzzleState> pq;
+    unordered_set<int> visited;
+
+    pq.push(initialState);
+
+    while (!pq.empty()) {
+        PuzzleState current = pq.top();
+        pq.pop();
+
+        cout << "Current State:\n";
+        printPuzzle(current);
+        cout << "Number of moves: " << current.g << endl;
+        cout << "Heuristic cost: " << current.h << endl;
+        cout << "-------------------\n";
+
+        if (isEqual(current, finalState)) {
+            cout << "Goal State Reached!\n";
+            cout << "Number of moves: " << current.g << endl;
+            cout << "Heuristic cost: " << current.h << endl;
+            break;
+        }
+
+        vector<PuzzleState> nextStates = generateNextStates(current);
+
+        for (const PuzzleState &nextState : nextStates) {
+            int hash = 0;
+            for (int i = 0; i < N; i++)
+                for (int j = 0; j < N; j++)
+                    hash = hash * 10 + nextState.puzzle[i][j];
+
+            if (visited.find(hash) == visited.end()) {
+                pq.push(nextState);
+                visited.insert(hash);
             }
         }
     }
 }
 
-// Main function to get input and start the solving process
+PuzzleState getPuzzleState(const string &prompt) {
+    PuzzleState state;
+
+    cout << prompt << " (0 represents the empty tile):\n";
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            cout << "Enter value at position (" << i << ", " << j << "): ";
+            cin >> state.puzzle[i][j];
+
+            if (state.puzzle[i][j] == 0)
+            {
+                state.zeroRow = i;
+                state.zeroCol = j;
+            }
+        }
+    }
+
+    state.g = 0;
+    state.h = calculateManhattanDistance(state);
+
+    return state;
+}
+
 int main()
 {
-    int x = 0, y = 0;  // Initialize coordinates of the blank space
-    int initial[N][N];  // Matrix to store the initial state
-    cout << "Enter initial state: " << endl;
-    for (int i = 0; i < N; i++){
-        for (int j = 0; j < N; j++){
-            cin >> initial[i][j];  // Read initial state
-            if (initial[i][j] == 0){
-                x = i;  // Find the coordinates of the blank space
-                y = j;
-            }
-        }
-    }
-    cout<<endl;
-    int final[N][N];  // Matrix to store the final state
-    cout << "Enter final state: " << endl;
-    for (int i = 0; i < N; i++){
-        for (int j = 0; j < N; j++){
-            cin >> final[i][j];  // Read final state
-        }
-    }
-    cout<<endl;
-    solve(initial, x, y, final);  // Solve the puzzle
+    PuzzleState initialState = getPuzzleState("Enter the initial state of the puzzle");
+    PuzzleState finalState = getPuzzleState("Enter the final state of the puzzle");
+
+    cout << "Initial State:\n";
+    printPuzzle(initialState);
+
+    aStarSearch(initialState, finalState);
 
     return 0;
 }
