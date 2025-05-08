@@ -1,7 +1,6 @@
 import gradio as gr
 from nltk.chat.util import Chat, reflections
 
-# conversation pairs
 pairs = [
     # Greetings
     [r"hi|hello|hey", ["Hello! Welcome to HotelBot. How can I assist you today?"]],
@@ -34,20 +33,15 @@ pairs = [
     [r"(.*)", ["Sorry, I didn't understand that. Can you rephrase your question or ask about booking, menu, hours, location, etc.?"]],
 ]
 
-# Initialize the chatbot
 chatbot = Chat(pairs, reflections)
 
-# Response function
-def respond(message, history):
-    return chatbot.respond(message)
+def respond(messgae,history):
+    return chatbot.respond(messgae)
 
-# Gradio UI
 demo = gr.ChatInterface(
-    fn=respond,
-    title="HotelBot",
-    description="Ask about booking a room, our menu, location, hours, or contact info.",
+    fn = respond,
+    title = "HotelBot",
+    description = "Book room and food",
     theme="soft"
 )
-
-# Launch the chatbot
 demo.launch()
