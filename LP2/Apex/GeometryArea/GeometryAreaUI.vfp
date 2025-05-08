@@ -1,0 +1,17 @@
+<apex:page controller="Geometry">
+    <apex:form >
+       <apex:pageBlock title="Area Calculator">
+           <apex:pageBlockSection title="Circle Area">
+               <apex:inputText value="{!radius}" label="Enter the radius"/>
+               <apex:commandButton action="{!calculateCircleArea}" value="Calculate Area of Circle"/>
+               <apex:outputText value="{!areaCircle}"></apex:outputText>
+           </apex:pageBlockSection>
+           <apex:pageBlockSection title="Rectangle Area">
+               <apex:inputText value="{!length}" label="Enter the length"/>
+               <apex:inputText value="{!breadth}" label="Enter the breadth"/>
+               <apex:commandButton action="{!calculateRectArea}" value="Calculate Area of Rectangle"/>
+               <apex:outputText value="{!areaRect}"></apex:outputText>
+           </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

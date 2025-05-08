@@ -1,0 +1,19 @@
+public class Prime {
+    public Integer num { get; set; }
+    public Boolean isPrime { get; set; }
+
+    public void checkPrime() {
+        isPrime = true;
+        if (num == null || num <= 1) {
+            isPrime = false;
+            return;
+        }
+
+        for (Integer i = 2; i <= Math.sqrt(num); i++) {
+            if (Math.mod(num,i) == 0) {
+                isPrime = false;
+                break;
+            }
+        }
+    }
+}

@@ -1,0 +1,40 @@
+public class MatrixAddition {
+    public String matrixA {get; set;} // Comma separated values
+    public String matrixB {get; set;} // Comma separated values
+    public List<List<Integer>> resultMatrix {get; set;}
+
+    // Method to process the input string into a List of Lists (Matrix)
+    private List<List<Integer>> convertToMatrix(String matrixInput) {
+        List<List<Integer>> matrix = new List<List<Integer>>();
+        List<String> rows = matrixInput.split(';'); // Split by row
+        for (String row : rows) {
+            List<Integer> rowList = new List<Integer>();
+            List<String> values = row.split(','); // Split by element
+            for (String value : values) {
+                rowList.add(Integer.valueOf(value.trim()));
+            }
+            matrix.add(rowList);
+        }
+        return matrix;
+    }
+
+    // Method to perform matrix addition
+    public void addMatrices() {
+        List<List<Integer>> matrixAList = convertToMatrix(matrixA);
+        List<List<Integer>> matrixBList = convertToMatrix(matrixB);
+        
+        if (matrixAList.size() != matrixBList.size() || matrixAList[0].size() != matrixBList[0].size()) {
+            resultMatrix = null;
+            return; // Matrices must have the same dimensions to add
+        }
+        
+        resultMatrix = new List<List<Integer>>();
+        for (Integer i = 0; i < matrixAList.size(); i++) {
+            List<Integer> row = new List<Integer>();
+            for (Integer j = 0; j < matrixAList[i].size(); j++) {
+                row.add(matrixAList[i][j] + matrixBList[i][j]);
+            }
+            resultMatrix.add(row);
+        }
+    }
+}

@@ -1,0 +1,20 @@
+public class Interest {
+    public Integer principal { get; set; }
+    public Integer rate { get; set; }
+    public Integer period { get; set; }
+    public Integer simpleInterest { get; set; }
+    public Decimal compoundInterest { get; set; } 
+
+    public void calculateSimpleInterest() {
+        simpleInterest = (principal * rate * period) / 100;
+    }
+
+    public void calculateCompoundInterest() {
+        Double p = principal;
+        Double r = rate / 100.0;
+        Double t = period;
+
+        Double amount = p * Math.pow(1 + r, t);
+        compoundInterest = Decimal.valueOf(amount - p); 
+    }
+}

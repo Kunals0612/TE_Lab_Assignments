@@ -1,0 +1,47 @@
+public class MatrixMultiplication {
+    public String matrixA {get; set;} // Comma separated rows for Matrix A
+    public String matrixB {get; set;} // Comma separated rows for Matrix B
+    public List<List<Integer>> resultMatrix {get; set;} // Result matrix as string
+
+    // Method to convert the input string into a 2D List (matrix)
+    private List<List<Integer>> convertToMatrix(String matrixInput) {
+        List<List<Integer>> matrix = new List<List<Integer>>();
+        List<String> rows = matrixInput.split(';'); // Split by rows
+        for (String row : rows) {
+            List<Integer> rowList = new List<Integer>();
+            List<String> values = row.split(','); // Split by elements
+            for (String value : values) {
+                rowList.add(Integer.valueOf(value.trim()));
+            }
+            matrix.add(rowList);
+        }
+        return matrix;
+    }
+
+    // Method to perform matrix multiplication
+    public void multiplyMatrices() {
+        List<List<Integer>> matrixAList = convertToMatrix(matrixA);
+        List<List<Integer>> matrixBList = convertToMatrix(matrixB);
+
+        // Validate dimensions for multiplication: A.columns == B.rows
+        if (matrixAList[0].size() != matrixBList.size()) {
+            return;
+        }
+
+        // Initialize the result matrix with appropriate dimensions
+        resultMatrix = new List<List<Integer>>();
+        
+        for (Integer i = 0; i < matrixAList.size(); i++) {
+            List<Integer> row = new List<Integer>();
+            for (Integer j = 0; j < matrixBList[0].size(); j++) {
+                Integer sum = 0;
+                for (Integer k = 0; k < matrixAList[0].size(); k++) {
+                    sum += matrixAList[i][k] * matrixBList[k][j];
+                }
+                row.add(sum);
+            }
+            resultMatrix.add(row);
+        }
+    }
+
+}

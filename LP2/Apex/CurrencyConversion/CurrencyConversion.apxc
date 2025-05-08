@@ -1,0 +1,29 @@
+public class CurrencyConverter {
+    public Decimal amount {get; set;}
+    public String fromCurrency {get; set;}
+    public String toCurrency {get; set;}
+    public Decimal convertedAmount {get; set;}
+    
+    public List<SelectOption> getCurrencyOptions(){
+        return new List<SelectOption>{
+            new SelectOption('INR','INR'),
+            new SelectOption('USD','USD'),
+            new SelectOption('EURO','EURO')
+        };
+    }
+    
+    public void convertCurrency(){
+        if(amount == null || fromCurrency == null || toCurrency == null){
+            convertedAmount = 0;
+            return;
+        }
+        Map<String, Map<String, Decimal>> rates = new Map<String, Map<String, Decimal>>{
+            'INR' => new Map<String, Decimal>{'USD' => 0.012, 'EURO' => 0.011, 'INR' => 1},
+            'USD' => new Map<String, Decimal>{'USD' => 1, 'EURO' => 0.91, 'INR' => 83.0},
+            'EURO' => new Map<String, Decimal>{'USD' => 1.1, 'EURO' => 1, 'INR' => 91.0}
+        };
+        
+        Decimal rate = rates.get(fromCurrency).get(toCurrency);
+        convertedAmount = amount * rate;
+    }
+}

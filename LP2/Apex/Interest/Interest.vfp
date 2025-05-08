@@ -1,0 +1,15 @@
+<apex:page controller="Interest">
+    <apex:form >
+        <apex:pageBlock title="Interest Calculator">
+            <apex:pageBlockSection >
+                <apex:inputText value="{!principal}" label="Principal" />
+                <apex:inputText value="{!rate}" label="Rate of Interest" />
+                <apex:inputText value="{!period}" label="Time Period (years)" />
+                <apex:commandButton value="Calculate Simple Interest" action="{!calculateSimpleInterest}" />
+                <apex:outputText value="Simple Interest: {!simpleInterest}" rendered="{!simpleInterest != null}" />
+                <apex:commandButton value="Calculate Compound Interest" action="{!calculateCompoundInterest}" />
+                <apex:outputText value="Compound Interest: {!compoundInterest}" rendered="{!compoundInterest != null}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

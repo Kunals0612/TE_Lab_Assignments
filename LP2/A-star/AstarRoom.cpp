@@ -12,7 +12,11 @@ public:
     int width, height;
     string type;
 
-    Object(int w, int h, string t) : width(w), height(h), type(t) {}
+    Object(int w, int h, string t) {
+        width = w;
+        height = h;
+        type = t;
+    }
 };
 
 class State {
@@ -21,7 +25,10 @@ public:
     int objIndex;              // next object to place
     int g, h;                  // cost and heuristic
 
-    State() : objIndex(0), g(0), h(0) {
+    State() {
+        objIndex = 0;
+        g = 0;
+        h = 0;
         room = vector<vector<int>>(ROOM_HEIGHT, vector<int>(ROOM_WIDTH, 0));
     }
 
@@ -85,7 +92,8 @@ void arrangeObjectsAStar() {
     pq.push(start);
 
     while (!pq.empty()) {
-        State current = pq.top(); pq.pop();
+        State current = pq.top(); 
+        pq.pop();
 
         if (current.objIndex == objects.size()) {
             cout << "Final Room Arrangement:\n";

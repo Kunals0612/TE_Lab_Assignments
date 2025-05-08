@@ -10,26 +10,22 @@ using namespace std;
 // Define the puzzle size
 const int N = 3;
 
-// Structure to represent a puzzle state
-struct PuzzleState
-{
+// Class to represent a puzzle state
+class PuzzleState {
+public:
     int puzzle[N][N];
     int zeroRow, zeroCol;
     int g;
     int h;
 
-    bool operator<(const PuzzleState &other) const
-    {
-        return (g + h) > (other.g + other.h);
+    bool operator<(const PuzzleState &other) const {
+        return (g + h) > (other.g + other.h); // For min-heap in priority_queue
     }
 };
 
-void printPuzzle(const PuzzleState &state)
-{
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
+void printPuzzle(const PuzzleState &state) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
             cout << state.puzzle[i][j] << " ";
         }
         cout << endl;
@@ -40,7 +36,7 @@ void printPuzzle(const PuzzleState &state)
 bool isEqual(const PuzzleState &state1, const PuzzleState &state2) {
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            if (state1.puzzle[i][j] != state2.puzzle[i][j]) 
+            if (state1.puzzle[i][j] != state2.puzzle[i][j])
                 return false;
         }
     }
@@ -137,8 +133,7 @@ PuzzleState getPuzzleState(const string &prompt) {
             cout << "Enter value at position (" << i << ", " << j << "): ";
             cin >> state.puzzle[i][j];
 
-            if (state.puzzle[i][j] == 0)
-            {
+            if (state.puzzle[i][j] == 0) {
                 state.zeroRow = i;
                 state.zeroCol = j;
             }
@@ -151,8 +146,7 @@ PuzzleState getPuzzleState(const string &prompt) {
     return state;
 }
 
-int main()
-{
+int main() {
     PuzzleState initialState = getPuzzleState("Enter the initial state of the puzzle");
     PuzzleState finalState = getPuzzleState("Enter the final state of the puzzle");
 

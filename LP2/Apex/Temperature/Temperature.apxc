@@ -1,0 +1,21 @@
+public class TemperatureConverter {
+    public Decimal celsius {get; set;}
+    public Decimal fahrenheit {get; set;}
+    public Decimal celsiusConvert {get; set;}
+    public Decimal fahrenheitConvert {get; set;}
+    
+    public TemperatureConverter(){
+        celsius = 0;
+        fahrenheit = 0;
+        celsiusConvert = 0;
+        fahrenheitConvert = 0;
+    }
+    
+    public void convertToFahrenheit() {
+        fahrenheitConvert = (celsius * 9/5) + 32;
+    }
+
+    public void convertToCelsius() {
+        celsiusConvert = (fahrenheit - 32) * 5/9;
+    }
+}

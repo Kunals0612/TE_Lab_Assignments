@@ -1,0 +1,48 @@
+public class Calculator {
+    public Decimal operand1 { get; set; }
+    public Decimal operand2 { get; set; }
+    public Decimal result { get; set; }
+
+    public void add() {
+        result = operand1 + operand2;
+    }
+
+    public void subtract() {
+        result = operand1 - operand2;
+    }
+
+    public void multiply() {
+        result = operand1 * operand2;
+    }
+
+    public void divide() {
+        if (operand2 != 0)
+            result = operand1 / operand2;
+        else
+            result = null;
+    }
+
+    public void sin() {
+        Double d = Math.sin((Double) operand1);
+        result = d;
+    }
+
+    public void cos() {
+        Double d = Math.cos((Double) operand1);
+        result = d;
+    }
+
+    public void tan() {
+        Double d = Math.tan((Double) operand1);
+        result = d;
+    }
+
+    public void log() {
+        if (operand1 > 0) {
+            Double d = Math.log((Double) operand1);
+            result = d;
+        } else {
+            result = null;
+        }
+    }
+}

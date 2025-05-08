@@ -1,0 +1,22 @@
+public class Geometry {
+    public Decimal radius {get; set;}
+    public Decimal length {get; set;}
+    public Decimal breadth {get; set;}
+    public Decimal areaRect {get; set;}
+    public Decimal areaCircle {get; set;}
+    
+    public Geometry(){
+        radius = 0;
+        length = 0;
+        breadth = 0;
+        areaRect = 0;
+        areaCircle = 0;
+    }
+    public void calculateCircleArea(){
+        areaCircle = Math.PI * radius * radius;
+    }
+    
+    public void calculateRectArea(){
+        areaRect = length * breadth;
+    }
+}

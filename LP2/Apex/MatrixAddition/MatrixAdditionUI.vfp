@@ -1,0 +1,21 @@
+<apex:page controller="MatrixAddition">
+    <apex:form >
+        <apex:pageBlock title="Matrix Addition">
+            <apex:pageBlockSection >
+                <apex:outputLabel value="Enter Matrix A (comma separated rows)" />
+                <apex:inputText value="{!matrixA}" label="Matrix A" />
+                
+                <apex:outputLabel value="Enter Matrix B (comma separated rows)" />
+                <apex:inputText value="{!matrixB}" label="Matrix B" />
+                
+                <apex:commandButton value="Add Matrices" action="{!addMatrices}" />
+                
+                <apex:outputPanel rendered="{!NOT(ISNULL(resultMatrix))}">
+                    <h3>Result Matrix:</h3>
+                    <apex:pageMessages />
+                    <apex:outputText value="{!resultMatrix}" />
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

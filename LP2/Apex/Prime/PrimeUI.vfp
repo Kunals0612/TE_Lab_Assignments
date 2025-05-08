@@ -1,0 +1,11 @@
+<apex:page controller="Prime">
+    <apex:form >
+        <apex:pageBlock title="Prime Number Checker">
+            <apex:pageBlockSection >
+                <apex:inputText value="{!num}" label="Enter Number" />
+                <apex:commandButton value="Check Prime" action="{!checkPrime}" />
+                <apex:outputText value="Is Prime: {!isPrime}" rendered="{!isPrime != null}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

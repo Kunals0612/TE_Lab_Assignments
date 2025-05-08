@@ -1,0 +1,19 @@
+public class ArrayAddition {
+    public String numbers {get; set;}
+    public Integer sum {get; set;}
+    
+    public ArrayAddition(){
+        numbers = '';
+        sum = 0;
+    }
+    
+    public void calculateSum(){
+        sum = 0;
+        if(String.isNotBlank(numbers)){
+            List<String> parts = numbers.split(',');
+            for(String num : parts){
+                sum += Integer.valueOf(num.trim());
+            }
+        }
+    }
+}

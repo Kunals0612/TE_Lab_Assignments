@@ -1,0 +1,28 @@
+<apex:page controller="Calculator">
+    <apex:form >
+        <apex:pageBlock title="Scientific Calculator">
+            <apex:pageBlockSection columns="2">
+                <apex:inputText value="{!operand1}" label="Operand 1" />
+                <apex:inputText value="{!operand2}" label="Operand 2" />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Basic Operations" columns="4">
+                <apex:commandButton value="Add" action="{!add}" />
+                <apex:commandButton value="Subtract" action="{!subtract}" />
+                <apex:commandButton value="Multiply" action="{!multiply}" />
+                <apex:commandButton value="Divide" action="{!divide}" />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Scientific Functions (use Operand 1)" columns="4">
+                <apex:commandButton value="Sin" action="{!sin}" />
+                <apex:commandButton value="Cos" action="{!cos}" />
+                <apex:commandButton value="Tan" action="{!tan}" />
+                <apex:commandButton value="Log" action="{!log}" />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection >
+                <apex:outputText value="Result: {!result}" style="font-weight:bold; font-size:16px;" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,11 @@
+<apex:page controller="ArrayAddition">
+    <apex:form >
+        <apex:pageBlock title="ArrayAddition">
+            <apex:pageBlockSection >
+                <apex:inputText value="{!numbers}" label="Enter commma seperated values"/>
+                <apex:commandButton action="{!calculateSum}" value="calculate sum"/>
+                <apex:outputText value="Sum: {!sum}"></apex:outputText>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
