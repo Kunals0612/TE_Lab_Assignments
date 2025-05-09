@@ -4,6 +4,7 @@ class Prims{
    public:
       int spanningTree(int V, vector<vector<pair<int,int>>>& adj){
           priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+          //weight and node
           pq.push({0,0});
           vector<int> vis(V, 0);
           int sum = 0;
