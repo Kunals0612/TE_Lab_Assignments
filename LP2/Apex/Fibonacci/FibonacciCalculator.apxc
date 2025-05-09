@@ -1,0 +1,30 @@
+public class FibonacciCalculator {
+    public Integer num { get; set; }
+    public List<Integer> fibonacciSeries { get; set; }
+    public String fibonacciString { get; set; } // This will store the formatted string
+
+    // Generate Fibonacci series
+    public void generateFibonacci() {
+        fibonacciSeries = new List<Integer>();
+        
+        if (num <= 0) {
+            fibonacciSeries.add(0); // Handle case when num is less than or equal to 0
+        } else if (num == 1) {
+            fibonacciSeries.add(0); // Only one term
+        } else {
+            fibonacciSeries.add(0);
+            fibonacciSeries.add(1);
+            for (Integer i = 2; i < num; i++) {
+                fibonacciSeries.add(fibonacciSeries[i-1] + fibonacciSeries[i-2]);
+            }
+        }
+
+        // Convert List of Fibonacci numbers to a String
+        fibonacciString = String.join(fibonacciSeries, ', ');
+    }
+}
+
+
+
+
+
